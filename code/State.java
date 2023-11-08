@@ -7,9 +7,9 @@ public class State {
     int initialMaterials;
     int initialEnergy;
 
-    double unitPriceFood;
-    double unitPriceMaterials;
-    double unitPriceEnergy;
+    int unitPriceFood;
+    int unitPriceMaterials;
+    int unitPriceEnergy;
 
     int amountRequestFood;
     int delayRequestFood;
@@ -20,17 +20,19 @@ public class State {
     int amountRequestEnergy;
     int delayRequestEnergy;
 
-    double priceBUILD1;
+    int priceBUILD1;
     int foodUseBUILD1;
     int materialsUseBUILD1;
     int energyUseBUILD1;
     int prosperityBUILD1;
 
-    double priceBUILD2;
+    int priceBUILD2;
     int foodUseBUILD2;
     int materialsUseBUILD2;
     int energyUseBUILD2;
     int prosperityBUILD2;
+
+    int moneySpent;
 
     public State(String input) {
         String[] parts = input.split(";");
@@ -51,9 +53,9 @@ public class State {
         initialMaterials = Integer.parseInt(initialResourcesPart[1]);
         initialEnergy = Integer.parseInt(initialResourcesPart[2]);
 
-        unitPriceFood = Double.parseDouble(unitPricesPart[0]);
-        unitPriceMaterials = Double.parseDouble(unitPricesPart[1]);
-        unitPriceEnergy = Double.parseDouble(unitPricesPart[2]);
+        unitPriceFood = Integer.parseInt(unitPricesPart[0]);
+        unitPriceMaterials = Integer.parseInt(unitPricesPart[1]);
+        unitPriceEnergy = Integer.parseInt(unitPricesPart[2]);
 
         amountRequestFood = Integer.parseInt(foodRequestPart[0]);
         delayRequestFood = Integer.parseInt(foodRequestPart[1]);
@@ -64,26 +66,28 @@ public class State {
         amountRequestEnergy = Integer.parseInt(energyRequestPart[0]);
         delayRequestEnergy = Integer.parseInt(energyRequestPart[1]);
 
-        priceBUILD1 = Double.parseDouble(build1Part[0]);
+        priceBUILD1 = Integer.parseInt(build1Part[0]);
         foodUseBUILD1 = Integer.parseInt(build1Part[1]);
         materialsUseBUILD1 = Integer.parseInt(build1Part[2]);
         energyUseBUILD1 = Integer.parseInt(build1Part[3]);
         prosperityBUILD1 = Integer.parseInt(build1Part[4]);
 
-        priceBUILD2 = Double.parseDouble(build2Part[0]);
+        priceBUILD2 = Integer.parseInt(build2Part[0]);
         foodUseBUILD2 = Integer.parseInt(build2Part[1]);
         materialsUseBUILD2 = Integer.parseInt(build2Part[2]);
         energyUseBUILD2 = Integer.parseInt(build2Part[3]);
         prosperityBUILD2 = Integer.parseInt(build2Part[4]);
+        moneySpent = 0;
     }
 
     public State(int initialProsperity, int initialFood, int initialMaterials, int initialEnergy,
-            double unitPriceFood, double unitPriceMaterials, double unitPriceEnergy,
+            int unitPriceFood, int unitPriceMaterials, int unitPriceEnergy,
             int amountRequestFood, int delayRequestFood,
             int amountRequestMaterials, int delayRequestMaterials,
             int amountRequestEnergy, int delayRequestEnergy,
-            double priceBUILD1, int foodUseBUILD1, int materialsUseBUILD1, int energyUseBUILD1, int prosperityBUILD1,
-            double priceBUILD2, int foodUseBUILD2, int materialsUseBUILD2, int energyUseBUILD2, int prosperityBUILD2) {
+            int priceBUILD1, int foodUseBUILD1, int materialsUseBUILD1, int energyUseBUILD1, int prosperityBUILD1,
+            int priceBUILD2, int foodUseBUILD2, int materialsUseBUILD2, int energyUseBUILD2, int prosperityBUILD2,
+            int moneySpent) {
 
         this.initialProsperity = initialProsperity;
         this.initialFood = initialFood;
@@ -108,12 +112,16 @@ public class State {
         this.energyUseBUILD2 = energyUseBUILD2;
         this.prosperityBUILD1 = prosperityBUILD1;
         this.prosperityBUILD2 = prosperityBUILD2;
-
+        this.moneySpent = moneySpent;
     }
     // Getter methods for accessing the state attributes
 
     public int getInitialProsperity() {
         return initialProsperity;
+    }
+
+    public int getMoneySpent() {
+        return moneySpent;
     }
 
     public int getInitialFood() {
@@ -128,15 +136,15 @@ public class State {
         return initialEnergy;
     }
 
-    public double getUnitPriceFood() {
+    public int getUnitPriceFood() {
         return unitPriceFood;
     }
 
-    public double getUnitPriceMaterials() {
+    public int getUnitPriceMaterials() {
         return unitPriceMaterials;
     }
 
-    public double getUnitPriceEnergy() {
+    public int getUnitPriceEnergy() {
         return unitPriceEnergy;
     }
 
@@ -164,7 +172,7 @@ public class State {
         return delayRequestEnergy;
     }
 
-    public double getPriceBUILD1() {
+    public int getPriceBUILD1() {
         return priceBUILD1;
     }
 
@@ -184,7 +192,7 @@ public class State {
         return prosperityBUILD1;
     }
 
-    public double getPriceBUILD2() {
+    public int getPriceBUILD2() {
         return priceBUILD2;
     }
 

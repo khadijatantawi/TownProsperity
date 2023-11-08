@@ -62,9 +62,13 @@ public class GenericSearch {
   public List<Node> expand(Node parentNode) {
 
     List<Node> childNodes = new ArrayList<>();
-    
-  // get the results of all actions (operators) 
+    int amount=parentNode.state.amountRequestFood; 
+    int delay = parentNode.state.delayRequestFood;
+    Town.RequestFood(amount,delay); 
 
+  // get the results of all actions (operators) 
+    // Node n1 = new Node(State object, Node parent, Operators operator, int depth, 0); 
+  
     return null;
   }
 
