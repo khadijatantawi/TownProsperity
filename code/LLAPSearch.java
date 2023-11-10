@@ -2,6 +2,7 @@ package code;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Function;
 
 import code.Problem.Operators;
 
@@ -10,27 +11,35 @@ public class LLAPSearch extends GenericSearch {
     List<Operators> list = Arrays.asList(Operators.REQUEST_ENERGY, Operators.REQUEST_FOOD, Operators.REQUEST_MATERIALS,
             Operators.BUILD1, Operators.BUILD2);
     Town town;
-    State InitialState;
+    // State InitialState;
+    public InitialStateParser InitialState;
 
     // solve
     public void solve(String initialState, String strategy, boolean visualize) {
 
-        InitialState = new State(initialState);
+        // InitialState = new State(initialState);
+        InitialState = new InitialStateParser(initialState);
+        State state = new State(InitialState.initialProsperity, InitialState.initialFood, InitialState.initialEnergy,
+                InitialState.initialMaterials, 0, InitialState);
 
-        town = new Town(InitialState.getInitialFood(), InitialState.getInitialMaterials(),
-                InitialState.getInitialEnergy(), InitialState.getInitialProsperity(), 0,
-                InitialState.getUnitPriceFood(), InitialState.getUnitPriceMaterials(),InitialState.getUnitPriceEnergy());
+        town = new Town(InitialState.initialFood, InitialState.initialMaterials,
+                InitialState.initialEnergy, InitialState.initialProsperity, 0,
+                InitialState.unitPriceFood, InitialState.unitPriceMaterials,
+                InitialState.unitPriceEnergy, InitialState);
 
-
-        Problem problem = new Problem(InitialState, list, null, false, null);
+        Problem problem = new Problem(state, list, null, false, 0);
 
         switch (strategy) {
             case "BF":
-                breadthFirstSearch(problem);
+                GeneralSearch(problem, Searchfunction.EnqueueAtEnd);
                 break;
             case "DF":
+                GeneralSearch(problem, Searchfunction.EnqueueAtFront);
                 break;
             case "ID":
+                break;
+            case "UC":
+                GeneralSearch(problem, Searchfunction.OrderedInsert);
                 break;
             case "GR1":
                 break;
@@ -46,19 +55,10 @@ public class LLAPSearch extends GenericSearch {
         }
     }
 
-    public List<Node> expand(Node parentNode) {
-
-        List<Node> childNodes = new ArrayList<>();
-        int amount = parentNode.state.amountRequestFood;
-        int delay = parentNode.state.delayRequestFood;
-        town.RequestFood(amount, delay);
-        
-        // State newState = new State(town.prosperity, town.food, town.materials, town.energy, InitialState.unitPriceFood, InitialState.unitPriceMaterials, InitialState.unitPriceEnergy, InitialState.amountRequestFood, InitialState.delayRequestFood, InitialState.amountRequestMaterials, InitialState.delayRequestMaterials, InitialState.amountRequestEnergy, InitialState.delayRequestEnergy, double priceBUILD1, int foodUseBUILD1, int materialsUseBUILD1, int energyUseBUILD1, int prosperityBUILD1, double priceBUILD2, int foodUseBUILD2, int materialsUseBUILD2, int energyUseBUILD2, int prosperityBUILD2)
-
-        // // get the results of all actions (operators)
-        // Node n1 = new Node(State object, Node parent, Operators operator, int depth,0);
-
-        return null;
+    public static void main(String[] args) {
+        LLAPSearch llapSearch = new LLAPSearch();
+        String s = "50;22,22,22;50,60,70;30,2;19,1;15,1;300,5,7,3,20;500,8,6,3,40;";
+        llapSearch.solve(s, "BF", false);
     }
 
 }
