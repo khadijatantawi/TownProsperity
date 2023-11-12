@@ -37,20 +37,20 @@ public class LLAPSearch extends GenericSearch {
         
         switch (strategy) {
             case "BF":
-                Node BFNode = GeneralSearch(problem, Searchfunction.EnqueueAtEnd);
-                String Plan = constructPlan(BFNode);
-                nodesExpanded = Integer.toString(BFNode.depth);
-                monetaryCost = Integer.toString(BFNode.state.moneySpent);
-                return Plan ; 
+            	
+                String BFPlan = GeneralSearch(problem, Searchfunction.EnqueueAtEnd);  
+                System.out.println("DF plan "+ BFPlan+ ";");      
+                String resultBFS = (BFPlan == null) ? "NOSOLUTION" : BFPlan ;
+                
+                return resultBFS;
   
             case "DF":
-            	Node DFNode = GeneralSearch(problem, Searchfunction.EnqueueAtFront);
+            	String DFNode = GeneralSearch(problem, Searchfunction.EnqueueAtFront);
+            	
             	System.out.println("solutionNodeOfDFS"+DFNode);
-                String DFPlan = constructPlan(DFNode); 
-                nodesExpanded = Integer.toString(DFNode.depth);
-                monetaryCost = Integer.toString(DFNode.state.moneySpent);
-                System.out.println("DF plan "+ DFPlan+ ";" + monetaryCost + ";" + nodesExpanded);
-                String result = (DFPlan == null) ? "NOSOLUTION" : DFPlan + "," + monetaryCost + "," + nodesExpanded;
+              
+                String result = (DFNode == null) ? "NOSOLUTION" : DFNode ;
+                
                 return result;
                 
 //                return DFPlan ;
@@ -96,8 +96,8 @@ public class LLAPSearch extends GenericSearch {
 
     public static void main(String[] args) {
         LLAPSearch llapSearch = new LLAPSearch();
-        String s = "50;22,22,22;50,60,70;30,2;19,1;15,1;300,5,7,3,20;500,8,6,3,40;";
-        llapSearch.solve(s, "DF", false);
+        String s = "50;12,12,12;50,60,70;30,2;19,2;15,2;300,5,7,3,20;500,8,6,3,40;";
+        llapSearch.solve(s, "BF", false);
     }
 
 }

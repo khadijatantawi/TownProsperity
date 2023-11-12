@@ -45,7 +45,7 @@ public class InitialStateParser {
         String[] materialsRequestPart = parts[4].split(",");
         String[] energyRequestPart = parts[5].split(",");
         String[] build1Part = parts[6].split(",");
-        String[] build2Part = parts[7].split(",");
+        String[] build2Part = parts[7].split(","); 
 
         // Initialize the variables based on the parsed values
         initialProsperity = Integer.parseInt(initialProsperityPart);

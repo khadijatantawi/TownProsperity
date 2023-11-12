@@ -44,6 +44,10 @@ public class Town {
     static int energyUseBUILD2;
     static int prosperityBUILD2;
     
+//    static boolean requestFood ; 
+//    static boolean requestMaterials ; 
+//    static boolean requestEnergy ; 
+    
     
     static InitialStateParser initialState;
    
@@ -107,20 +111,25 @@ public class Town {
         food -= 1;
         materials -= 1;
         energy -= 1;
-        //condition first of delay 
-        food += amountRequestFood;
         moneySpent += unitPriceFood + unitPriceMaterials + unitPriceEnergy;
         depth +=1 ; 
+       
         
+        if (delayRequestFood==0) {
+       	 food += amountRequestFood;
+       }
+       
        
         State newChildState = new State(prosperity, food, energy, materials, moneySpent, initialState);	
         Node childNode = new Node(newChildState, parentNode, Operators.REQUEST_FOOD, depth , moneySpent);
-        childNode.setDelay(delayRequestFood);
+        childNode.foodDelay= delayRequestFood ;
+        
     
         return childNode;
 //    	System.out.println("request food node  :"+food + " , "+ money +" , " + foodAmount + newChildState);
     }
 
+    
     public static Node RequestMaterials(Node parentNode) {
 //    	System.out.println("RequestMaterials : "+materials + " , "+ food +" , " + energy);
         if (materials == 0 || moneySpent > 100000|| materials>50) {
@@ -135,19 +144,21 @@ public class Town {
         
         food -= 1;
         materials -= 1;
-        energy -= 1;
-        //condition of delay 
-        materials += amountRequestMaterials;
+        energy -= 1;        
         moneySpent += unitPriceFood + unitPriceMaterials + unitPriceEnergy;
         depth+=1; 
         
-
+        
+        if (delayRequestMaterials==0) {
+        	materials += amountRequestMaterials;
+        }
+ 
 
 //    	System.out.println("RequestMaterialsAfter : "+materials + " , "+ food +" , " + energy);
 
         State newChildState = new State(prosperity, food, energy, materials, moneySpent, initialState);
         Node childNode = new Node(newChildState, parentNode, Operators.REQUEST_MATERIALS, depth, moneySpent);
-        childNode.setDelay(delayRequestMaterials); 
+        childNode.materialsDelay=delayRequestMaterials; 
 
         return childNode;
     }
@@ -167,19 +178,20 @@ public class Town {
         food -= 1;
         materials -= 1;
         energy -= 1;
-        energy += amountRequestEnergy;
         moneySpent += unitPriceFood + unitPriceMaterials + unitPriceEnergy;
     
-        
+        if (delayRequestEnergy==0) {
+        	 energy += amountRequestEnergy;
+        }
 
         State newChildState = new State(prosperity, food, energy, materials, moneySpent, initialState);
         Node childNode = new Node(newChildState, parentNode, Operators.REQUEST_ENERGY, depth, moneySpent);
-        childNode.setDelay(delayRequestEnergy); 
+        childNode.energyDelay = delayRequestEnergy; 
         return childNode;
 
     }
 
-    public static Node Wait(int delay, Node parentNode) {
+    public static Node Wait(Node parentNode) {
 //        if (parentNode.operator == Operators.REQUEST_FOOD || parentNode.operator == Operators.REQUEST_ENERGY ||
 //                parentNode.operator == Operators.REQUEST_MATERIALS || parentNode.operator == Operators.WAIT) {
 //            delay -= 1;
@@ -189,7 +201,7 @@ public class Town {
          energy = parentNode.state.energy; 
          moneySpent = parentNode.state.moneySpent ;
          depth = parentNode.depth;
-         
+         prosperity = parentNode.state.prosperity; 
 
          food -= 1;
          materials -= 1;
@@ -197,11 +209,29 @@ public class Town {
          depth+=1 ; 
          
         moneySpent += unitPriceFood + unitPriceMaterials + unitPriceEnergy;
-        if (parentNode.getDelay() > 0) {
-        	int delayparent = parentNode.getDelay(); 
-        	parentNode.setDelay(parentNode.getDelay()-1) ; 
+        
+        State newChildState = new State(prosperity, food, energy, materials, moneySpent, initialState);   
+        Node childNode = new Node(newChildState, parentNode, Operators.WAIT , parentNode.depth+1 , moneySpent);
+        
+        if (parentNode.foodDelay > 0 ) {
+        	childNode.foodDelay=parentNode.foodDelay-1 ; 
+        	if (childNode.foodDelay ==0 ) {
+        		 childNode.state.food+=amountRequestFood ; 
+        	}
+        }else if (parentNode.energyDelay>0) {
+        	childNode.energyDelay=parentNode.energyDelay-1;
+        	if (childNode.energyDelay ==0 ) {
+        		childNode.state.energy+=amountRequestEnergy ; 
+        	}
+        }else if (parentNode.materialsDelay>0) {
+        	childNode.energyDelay=parentNode.materialsDelay-1;
+        	if (childNode.materialsDelay ==0 ) {
+        		childNode.state.materials+=amountRequestMaterials ; 
+        	}
+        	
         }
-        return parentNode;
+       
+        return childNode;
     }
 
     
@@ -226,13 +256,25 @@ public class Town {
         
         State newChildState = new State(prosperity, food, energy, materials, moneySpent, initialState);   
         Node childNode = new Node(newChildState, parentNode, Operators.BUILD1 , parentNode.depth+1 , moneySpent);
-        if (parentNode.getDelay() > 0) {
-        	int delayparent = parentNode.getDelay(); 
-        	parentNode.setDelay(parentNode.getDelay()-1) ; 
+        
+        if (parentNode.foodDelay > 0 ) {
+        	childNode.foodDelay=parentNode.foodDelay-1 ; 
+        	if (childNode.foodDelay ==0 ) {
+        		 childNode.state.food+=amountRequestFood ; 
+        	}
+        }else if (parentNode.energyDelay>0) {
+        	childNode.energyDelay=parentNode.energyDelay-1;
+        	if (childNode.energyDelay ==0 ) {
+        		childNode.state.energy+=amountRequestEnergy ; 
+        	}
+        }else if (parentNode.materialsDelay>0) {
+        	childNode.energyDelay=parentNode.materialsDelay-1;
+        	if (childNode.materialsDelay ==0 ) {
+        		childNode.state.materials+=amountRequestMaterials ; 
+        	}
+        	
         }
-        
-        
-        
+
         return childNode ; 
         }
         
@@ -260,10 +302,25 @@ public class Town {
 
         State newChildState = new State(prosperity, food, energy, materials, moneySpent, initialState);
         Node childNode = new Node(newChildState, parentNode, Operators.BUILD2, parentNode.depth+1, moneySpent);
-        if (parentNode.getDelay() > 0) {
-        	int delayparent = parentNode.getDelay(); 
-        	parentNode.setDelay(parentNode.getDelay()-1) ; 
+        
+        if (parentNode.foodDelay > 0 ) {
+        	childNode.foodDelay=parentNode.foodDelay-1 ; 
+        	if (childNode.foodDelay ==0 ) {
+        		 childNode.state.food+=amountRequestFood ; 
+        	}
+        }else if (parentNode.energyDelay>0) {
+        	childNode.energyDelay=parentNode.energyDelay-1;
+        	if (childNode.energyDelay ==0 ) {
+        		childNode.state.energy+=amountRequestEnergy ; 
+        	}
+        }else if (parentNode.materialsDelay>0) {
+        	childNode.energyDelay=parentNode.materialsDelay-1;
+        	if (childNode.materialsDelay ==0 ) {
+        		childNode.state.materials+=amountRequestMaterials ; 
+        	}
+        	
         }
+        
         return childNode;
         }
     }

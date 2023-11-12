@@ -11,9 +11,11 @@ public class Node {
     Operators operator;
     int depth;
     int cost; // Cost associated with reaching this node
-    List<Operators> list = Arrays.asList(Operators.REQUEST_ENERGY, Operators.REQUEST_FOOD, Operators.REQUEST_MATERIALS,
-            Operators.BUILD1, Operators.BUILD2);
-    int delay ; 
+
+    
+    int foodDelay ; 
+    int materialsDelay ; 
+    int energyDelay ; 
 
     public Node(State object, Node parent, Operators operator, int depth, int cost) {
 
@@ -22,7 +24,10 @@ public class Node {
         this.operator = operator;
         this.depth = depth;
         this.cost = cost;
-       
+        
+        this.foodDelay=0; 
+        this.materialsDelay =0;
+        this.energyDelay=0 ; 
 
     }
 
@@ -30,13 +35,6 @@ public class Node {
         return state;
     }
   
-    public void setDelay(int newDelay) {
-    	this.delay=newDelay; 
-    }
-
-    public int getDelay() {
-    	return delay ; 
-    }
     
     public String toString() {
     	

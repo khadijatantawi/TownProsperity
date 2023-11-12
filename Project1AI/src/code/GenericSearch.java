@@ -11,38 +11,56 @@ public class GenericSearch {
   }
 
   static int depth = 0;
-
-  public static Node GeneralSearch(Problem problem, Searchfunction searchFunction) {
+//  static List<Node> nodesInQueue = new ArrayList<Node>();
+  
+  public static String GeneralSearch(Problem problem, Searchfunction searchFunction) {
 
     Node initialStateNode = new Node(problem.initialState, null, null, 0, 0);
+   
+    
+    StringBuilder result = new StringBuilder();
+    int noOfNodes=0 ; 
 
         switch (searchFunction) {
+        
           case EnqueueAtEnd:
+        	  
         	  Queue<Node> nodes = new LinkedList<>();
         	  nodes.add(initialStateNode);
-        	  while (!nodes.isEmpty()) {
+        	  while (!nodes.isEmpty()) { 
+        		  
         		  Node frontNode = nodes.poll();
+        		  noOfNodes += 1 ; 
+        		  
+        		  if (frontNode.operator != null) {
+        			    result.append(frontNode.operator.toString()).append(",");
+        			}
+        		  
+//        		  System.out.println("front node : "+ frontNode);
         		  if (problem.goalTest(frontNode.state.prosperity) == true ) {
-        		        //
-        		    	  System.out.println("dijdij maroma maloka");
-        		        return frontNode;
-        		        
-        		   } else {
+        			  
+        			  if (result.length() > 0 && result.charAt(result.length() - 1) == ',') {
+        			        result.deleteCharAt(result.length() - 1);
+        			    }
+        		    	System.out.println("GOAL SATISFIED -- " + frontNode);
+        		    	 result.append(";").append(frontNode.cost).append(";").append(noOfNodes);
         		    	
-        		        State currentState = frontNode.getState();
-
-        		        depth += 1;
-
-        		        List<Node> expandedNodes = expand(frontNode, problem.operators);
-        		        
-        		        	nodes.addAll(expandedNodes);
-        		        
+        		    	return result.toString();		        
+        		  } 
+        		  else {
+        			  State currentState = frontNode.getState();
+        		      depth += 1;
+        		      List<Node> expandedNodes = expand(frontNode, problem.operators);
+        		      nodes.addAll(expandedNodes);
+        		      
+        		     
         		   }
         	  }
             break;
             
           case OrderedInsert:
             break;
+            
           case EnqueueAtFront:
         	  Stack <Node> stackNodes = new Stack<>();
         		stackNodes.push(initialStateNode);
@@ -51,9 +69,9 @@ public class GenericSearch {
         		  Node frontNode = stackNodes.pop();
         		  System.out.println("front node : "+ frontNode);
         		  if (problem.goalTest(frontNode.state.prosperity) == true ) {
-        		        //
-        		    	  System.out.println("dijdij maroma maloka");
-        		        return frontNode;
+        			  System.out.println("GOAL SATISFIED -- " + frontNode);
+        			  
+        			  return result.toString();
         		        
         		   }
         		   else {
@@ -73,50 +91,57 @@ public class GenericSearch {
         	  }
       }
     
-    return null;
+        return result.toString();
+        
   }
-
+//  public static void removeReduntantNodes(List<Node> nodes) {
+//		for (int i=nodes.size()-1;i>=0;i--) {
+//			if(nodesInQueue.contains(nodes.get(i))) {
+//				nodes.remove(i);
+//			}else {
+//				nodesInQueue.add(nodes.get(i));
+//			}
+//		}
+//	}
   static int delay;
 
   public static List<Node> expand(Node parentNode, Operators operators) {
 
     List<Node> childNodes = new ArrayList<>();
     
-    delay = parentNode.getDelay() ; 
-//    System.out.println("town "+Town.food +", "+Town.materials);
-    
     Node reqFoodNode = Town.RequestFood(parentNode);
-//    System.out.println("town "+Town.food +", "+Town.materials);
-//    System.out.println("reqFoodNode  "+ reqFoodNode);
     Node reqMaterialsNode = Town.RequestMaterials(parentNode);
-//    System.out.println("town "+Town.food +", "+Town.materials);
-
     Node reqEnergyNode = Town.RequestEnergy(parentNode);
-
-    Node build1Node = Town.Build1(parentNode);
-     
+    Node build1Node = Town.Build1(parentNode);   
     Node build2Node = Town.Build2(parentNode);
- // Check for null before adding to the list
-    if (reqFoodNode != null && delay==0) {
-        childNodes.add(reqFoodNode);
-    }
-//    System.out.print("req Food Node  : " + reqFoodNode);
+    Node waitNode = Town.Wait(parentNode); 
     
-    if (reqMaterialsNode != null && delay==0 ) {
-        childNodes.add(reqMaterialsNode); 
-        }
-    if (reqEnergyNode != null && delay==0 ) {
-        childNodes.add(reqEnergyNode);
-    }
+//	System.out.println("town "+Town.food +", "+Town.materials);
+//	System.out.println("town "+Town.food +", "+Town.materials);
+//	System.out.println("town "+Town.food +", "+Town.materials);
+//	System.out.println("reqFoodNode  "+ reqFoodNode);
+//	Check for null before adding to the list
+    
     if (build1Node != null) {
         childNodes.add(build1Node);
     }    
     if (build2Node != null) {
         childNodes.add(build2Node);
     }
-
-
-
+    if (reqFoodNode != null && parentNode.foodDelay== 0 && parentNode.materialsDelay==0 && parentNode.energyDelay==0 ) {
+        childNodes.add(reqFoodNode);
+    }
+//    System.out.print("req Food Node  : " + reqFoodNode);
+    if (reqMaterialsNode != null &&  parentNode.foodDelay== 0 && parentNode.materialsDelay==0 && parentNode.energyDelay==0 ) {
+        childNodes.add(reqMaterialsNode); 
+        }
+    if (reqEnergyNode != null &&  parentNode.foodDelay== 0 && parentNode.materialsDelay==0 && parentNode.energyDelay==0) {
+        childNodes.add(reqEnergyNode);
+    }
+    if (waitNode!= null && parentNode.foodDelay> 0 && parentNode.materialsDelay>0 && parentNode.energyDelay>0) {
+    	childNodes.add(waitNode);
+    }
+    
     // get the results of all actions (operators)
     // Node n1 = new Node(State object, Node parent, Operators operator, int depth,
     // 0);
@@ -128,13 +153,14 @@ public class GenericSearch {
     	
     	System.out.print("node " + i + ":");
         System.out.println("\t"+childNode);
-        System.out.println("\tDELAY AMOUNT : "+ delay+"\n" );
+        System.out.println("\tFOOD DELAY : "+ childNode.foodDelay +"\tENERGY DELAY : "+ childNode.energyDelay+"\tMATERIALS DELAY : "+childNode.materialsDelay+"\n" );
 
         i+=1; 
     }
-    
+//    removeReduntantNodes(childNodes);
     return childNodes;
   }
+  
 
   private static String constructPlan(Node node) {
     // Implement logic to construct the plan from the root node to the current node
