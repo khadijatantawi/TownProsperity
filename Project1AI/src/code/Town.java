@@ -103,7 +103,7 @@ public class Town {
 		State newChildState = new State(parentNode.state.prosperity, Math.min(food, 50), Math.min(energy, 50),
 				Math.min(materials, 50), moneySpent, initialState, delay2, Resource.FOOD);
 
-		Node childNode = new Node(newChildState, parentNode, Actions.REQUESTFOOD, parentNode.depth + 1, moneySpent);
+		Node childNode = new Node(newChildState, parentNode, Actions.REQUESTFOOD, parentNode.depth+1, moneySpent);
 		childNode.foodDelay = delayRequestFood;
 
 		return childNode;

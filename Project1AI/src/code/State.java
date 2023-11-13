@@ -22,6 +22,20 @@ public class State {
         this.delay = delay;
 		this.requestedResources = requestedResources;
     }
+    
+	@Override
+	public int hashCode() {
+	    int result = 17;
+	    result = 31 * result + prosperity;
+	    result = 31 * result + food;
+	    result = 31 * result + materials;
+	    result = 31 * result + energy;
+	    result = 31 * result + delay;
+	    result = 31 * result + (requestedResources == null ? 0 : requestedResources.hashCode());
+
+	    return result;
+	}
+	
     public String toString() {
         return " State { " +
         		"prosperity=" + prosperity +

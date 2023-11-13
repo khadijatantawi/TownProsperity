@@ -6,7 +6,7 @@ import code.Constants.* ;
 
 //import code.Problem.Operators;
 
-public class Node {
+public class Node { 
     State state; 
     Node parent; // Parent node in the search tree
     Actions operator;
@@ -37,6 +37,12 @@ public class Node {
     }
   
     
+	@Override
+	public int hashCode() {
+	    return state.hashCode();
+	}
+	
+	
     public String toString() {
     	
     	 return "Node { \n" +

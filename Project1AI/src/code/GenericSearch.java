@@ -68,6 +68,7 @@ public abstract class GenericSearch {
 			while (!priorityQueue.isEmpty()) {
 
 				Node frontNode = priorityQueue.poll();
+				System.out.println("front node : " + frontNode);
 				noOfNodes += 1;
 
 				if (problem.goalTest(frontNode.state.prosperity)) {
@@ -130,9 +131,9 @@ public abstract class GenericSearch {
 		Node build2Node = Town.Build2(parentNode);
 		Node waitNode = Town.Wait(parentNode);
 
-//		System.out.println("Build1 Node ----  "+build1Node);
+		System.out.println("WAIT Node ----  "+waitNode);
 		switch (strategy) {
-		case BF:
+		case BF :
 			if (build1Node != null) {
 				childNodes.add(build1Node);
 			}
@@ -156,9 +157,7 @@ public abstract class GenericSearch {
 			break;
 
 		case DF:
-			if (waitNode != null
-					&& (parentNode.foodDelay > 0 || parentNode.materialsDelay > 0 || parentNode.energyDelay > 0)
-					&& parentNode.state.requestedResources != null) {
+			if (waitNode != null && parentNode.state.requestedResources != null) {
 				childNodes.add(waitNode);
 			}
 			if (reqFoodNode != null && parentNode.state.requestedResources == null) {
@@ -179,7 +178,8 @@ public abstract class GenericSearch {
 				childNodes.add(build2Node);
 			}
 			break;
-		case UC:
+		
+		case UC : 
 			break;
 
 		}

@@ -11,7 +11,9 @@ public class LLAPSearch extends GenericSearch {
 
     static Town town;
     public static InitialStateParser InitialState;
-
+    static int maxDepth = Integer.MAX_VALUE;
+    
+    
     public static String solve(String initialState, String strategy, boolean visualize) {
 
         InitialState = new InitialStateParser(initialState);
@@ -22,6 +24,9 @@ public class LLAPSearch extends GenericSearch {
         Problem problem = new Problem(state, null);
         LLAP.visualize=visualize; 
         
+        
+        maxDepth = Integer.MAX_VALUE;
+       
         String nodesExpanded; 
         String monetaryCost;
         Node solution=null;
@@ -32,6 +37,16 @@ public class LLAPSearch extends GenericSearch {
             case "DF":
             	solution = GeneralSearch(problem, Searchfunction.EnqueueAtFront);break; 
             case "ID":
+            	
+        		for(int i = 0; i <Integer.MAX_VALUE; i++) {
+        			maxDepth = i;
+        			solution = GeneralSearch(problem, Searchfunction.EnqueueAtFront);
+        			nodesInQueue.clear();
+        			if(solution != null) {
+        				break;
+        			}
+        		}
+        		
                 break;
             case "UC":
             	solution=GeneralSearch(problem, Searchfunction.OrderedInsert);break;
@@ -55,6 +70,10 @@ public class LLAPSearch extends GenericSearch {
 		return formulatedSolution;
        
     }
+   
+ 
+
+    
 	public String formulateSolution(Node goalNode) {
 //		System.out.println("Goal nodeee"+goalNode); 
 		if (goalNode == null) {
