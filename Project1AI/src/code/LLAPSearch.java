@@ -34,8 +34,7 @@ public class LLAPSearch extends GenericSearch {
             case "ID":
                 break;
             case "UC":
-            	solution=GeneralSearch(problem, Searchfunction.OrderedInsert);
-                break;
+            	solution=GeneralSearch(problem, Searchfunction.OrderedInsert);break;
             case "GR1":
                 break;
             case "GR2":
@@ -69,6 +68,7 @@ public class LLAPSearch extends GenericSearch {
 		}
 	}
 	
+
 	  private static String constructPlan(Node node) {
 		    List<String> actions = new ArrayList<>();
 		    
@@ -80,15 +80,7 @@ public class LLAPSearch extends GenericSearch {
 		    return String.join(",", actions);
 		  }
 
-//	  public String getPlan(Node node) {
-//			if(node.parent == null) return "";
-//			String parentPlan = getPlan(node.parent);
-//			if(this.visualize) {
-//				System.out.println(node); // Printing nodes' order to reach goal
-//			} 
-//			String plan = parentPlan + (parentPlan.equals("")?"":",") + node.operator.name();
-//			return plan;
-//		}
+
 	  
 	@Override
 	public boolean goalTest(Node node) {

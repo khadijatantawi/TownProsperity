@@ -42,7 +42,7 @@ public class Town {
 	static InitialStateParser initialState;
 
 	static int depth;
-	static int delay;
+	static int delay2;
 	static Resource requestedResource;
 	static int resourceAmount;
 
@@ -79,42 +79,31 @@ public class Town {
 		this.materialsUseBUILD2 = initialState.materialsUseBUILD2;
 		this.energyUseBUILD2 = initialState.energyUseBUILD2;
 		this.prosperityBUILD2 = initialState.prosperityBUILD2;
-
+		this.delay2 = 0;
 		moneySpent = 0;
 	}
 
 	public static Node RequestFood(Node parentNode) {
-		moneySpent = parentNode.state.moneySpent;
-		int total = moneySpent + unitPriceFood + unitPriceMaterials + unitPriceEnergy;
+
+		int total = parentNode.state.moneySpent + unitPriceFood + unitPriceMaterials + unitPriceEnergy;
 
 		if (food <= 0 || materials <= 0 || energy <= 0 || moneySpent > 100000 || food == 50
 				|| (food - 1 + amountRequestFood) >= 50 || 100000 - total < 0) {
 			return null;
 		}
 
-		food = parentNode.state.food;
-		materials = parentNode.state.materials;
-		energy = parentNode.state.energy;
-		moneySpent = parentNode.state.moneySpent;
-		prosperity = parentNode.state.prosperity;
-		depth = parentNode.depth;
+		food = parentNode.state.food - 1;
+		materials = parentNode.state.materials - 1;
+		energy = parentNode.state.energy - 1;
+		moneySpent = parentNode.state.moneySpent + unitPriceFood + unitPriceMaterials + unitPriceEnergy;
+		;
 
-		food -= 1;
-		materials -= 1;
-		energy -= 1;
-		moneySpent += unitPriceFood + unitPriceMaterials + unitPriceEnergy;
-		depth += 1;
+		delay2 = delayRequestFood;
 
-		delay = delayRequestFood;
+		State newChildState = new State(parentNode.state.prosperity, Math.min(food, 50), Math.min(energy, 50),
+				Math.min(materials, 50), moneySpent, initialState, delay2, Resource.FOOD);
 
-//		if (delayRequestFood == 0) {
-//			food += amountRequestFood;
-//		}
-
-		State newChildState = new State(prosperity, Math.min(food, Constants.RESOURCE_LIMIT),
-				Math.min(energy, Constants.RESOURCE_LIMIT), Math.min(materials, Constants.RESOURCE_LIMIT), moneySpent,
-				initialState, delay, Resource.FOOD);
-		Node childNode = new Node(newChildState, parentNode, Actions.REQUESTFOOD, depth, moneySpent);
+		Node childNode = new Node(newChildState, parentNode, Actions.REQUESTFOOD, parentNode.depth + 1, moneySpent);
 		childNode.foodDelay = delayRequestFood;
 
 		return childNode;
@@ -123,6 +112,7 @@ public class Town {
 
 	public static Node RequestMaterials(Node parentNode) {
 //    	System.out.println("RequestMaterials : "+materials + " , "+ food +" , " + energy);
+
 		moneySpent = parentNode.state.moneySpent;
 		int total = moneySpent + unitPriceFood + unitPriceMaterials + unitPriceEnergy;
 
@@ -130,31 +120,22 @@ public class Town {
 				|| (materials - 1 + amountRequestMaterials) >= 50 || 100000 - total < 0) {
 			return null;
 		}
-		food = parentNode.state.food;
-		materials = parentNode.state.materials;
-		energy = parentNode.state.energy;
-		moneySpent = parentNode.state.moneySpent;
+		food = parentNode.state.food - 1;
+		materials = parentNode.state.materials - 1;
+		energy = parentNode.state.energy - 1;
+		moneySpent = parentNode.state.moneySpent + unitPriceFood + unitPriceMaterials + unitPriceEnergy;
+
 		prosperity = parentNode.state.prosperity;
-		depth = parentNode.depth;
 
-		food -= 1;
-		materials -= 1;
-		energy -= 1;
-		moneySpent += unitPriceFood + unitPriceMaterials + unitPriceEnergy;
-		depth += 1;
-
-		delay = delayRequestMaterials;
-
-//		if (delayRequestMaterials == 0) {
-//			materials += amountRequestMaterials;
-//		}
+		delay2 = delayRequestMaterials;
 
 //    	System.out.println("RequestMaterialsAfter : "+materials + " , "+ food +" , " + energy);
 
 		State newChildState = new State(prosperity, Math.min(food, Constants.RESOURCE_LIMIT),
 				Math.min(energy, Constants.RESOURCE_LIMIT), Math.min(materials, Constants.RESOURCE_LIMIT), moneySpent,
-				initialState, delay, Resource.MATERIALS);
-		Node childNode = new Node(newChildState, parentNode, Actions.REQUESTMATERIALS, depth, moneySpent);
+				initialState, delay2, Resource.MATERIALS);
+		Node childNode = new Node(newChildState, parentNode, Actions.REQUESTMATERIALS, parentNode.depth + 1,
+				moneySpent);
 		childNode.materialsDelay = delayRequestMaterials;
 
 		return childNode;
@@ -168,26 +149,22 @@ public class Town {
 			return null;
 		}
 
-		food = parentNode.state.food;
-		materials = parentNode.state.materials;
-		energy = parentNode.state.energy;
-		moneySpent = parentNode.state.moneySpent;
+		food = parentNode.state.food - 1;
+		materials = parentNode.state.materials - 1;
+		energy = parentNode.state.energy - 1;
+		moneySpent = parentNode.state.moneySpent + unitPriceFood + unitPriceMaterials + unitPriceEnergy;
+		;
 		prosperity = parentNode.state.prosperity;
 
-		food -= 1;
-		materials -= 1;
-		energy -= 1;
-		moneySpent += unitPriceFood + unitPriceMaterials + unitPriceEnergy;
-		delay = delayRequestEnergy;
-		
-//        if (delayRequestEnergy==0) {
-//        	 energy += amountRequestEnergy;
-//        }
+		delay2 = delayRequestEnergy;
 
 		State newChildState = new State(prosperity, Math.min(food, Constants.RESOURCE_LIMIT),
 				Math.min(energy, Constants.RESOURCE_LIMIT), Math.min(materials, Constants.RESOURCE_LIMIT), moneySpent,
-				initialState, delay, Resource.ENERGY);
-		Node childNode = new Node(newChildState, parentNode, Actions.REQUESTENERGY, depth, moneySpent);
+				initialState, delay2, Resource.ENERGY);
+		
+//		System.out.print("delay--" + delay2 + "delayrequestenergy-- " + delayRequestEnergy);
+		
+		Node childNode = new Node(newChildState, parentNode, Actions.REQUESTENERGY, parentNode.depth + 1, moneySpent);
 		childNode.energyDelay = delayRequestEnergy;
 		return childNode;
 
@@ -200,50 +177,45 @@ public class Town {
 		if (food <= 0 || materials <= 0 || energy <= 0 || moneySpent > 100000 || 100000 - total < 0) {
 			return null;
 		}
-		food = parentNode.state.food;
-		materials = parentNode.state.materials;
-		energy = parentNode.state.energy;
+		food = parentNode.state.food - 1;
+		materials = parentNode.state.materials - 1;
+		energy = parentNode.state.energy - 1;
 
-		depth = parentNode.depth;
 		prosperity = parentNode.state.prosperity;
 
-		food -= 1;
-		materials -= 1;
-		energy -= 1;
-		depth += 1;
-
-		moneySpent += unitPriceFood + unitPriceMaterials + unitPriceEnergy;
+		moneySpent = parentNode.state.moneySpent + unitPriceFood + unitPriceMaterials + unitPriceEnergy;
 
 		if (parentNode.state.delay > 0) {
-			delay = parentNode.state.delay - 1;
-			resourceAmount = delay > 0 ? 0
+			delay2 = parentNode.state.delay - 1;
+			resourceAmount = delay2 > 0 ? 0
 					: parentNode.state.requestedResources == Resource.FOOD ? Town.amountRequestFood
 							: parentNode.state.requestedResources == Resource.ENERGY ? Town.amountRequestEnergy
 									: Town.amountRequestMaterials;
 
 			switch (parentNode.state.requestedResources) {
 			case FOOD:
-				food = resourceAmount;
+				food += resourceAmount;
 				break;
 			case MATERIALS:
-				materials = resourceAmount;
+				materials += resourceAmount;
 				break;
 			case ENERGY:
-				energy = resourceAmount;
+				energy += resourceAmount;
 				break;
 			default:
 				break;
 			}
-			requestedResource = delay > 0 ? parentNode.state.requestedResources : null;
+			requestedResource = delay2 > 0 ? parentNode.state.requestedResources : null;
 		} else {
-			delay = 0;
+			delay2 = 0;
 			requestedResource = null;
 		}
 
-		State newChildState = new State(prosperity, Math.min(food, Constants.RESOURCE_LIMIT),
-				Math.min(energy, Constants.RESOURCE_LIMIT), Math.min(materials, Constants.RESOURCE_LIMIT), moneySpent,
-				initialState, delay, requestedResource);
-		Node childNode = new Node(newChildState, parentNode, Actions.WAIT, parentNode.depth + 1, moneySpent);
+		State newChildState = new State(prosperity, Math.min(food, 50),
+				Math.min(energy, 50), Math.min(materials,50), moneySpent,
+				initialState, delay2, requestedResource);
+		
+		Node childNode = new Node(newChildState, parentNode, Actions.WAIT, parentNode.depth+1, moneySpent);
 
 		return childNode;
 	}
@@ -258,8 +230,10 @@ public class Town {
 
 		int total = moneySpent + priceBUILD1 + ((foodUseBUILD1 * unitPriceFood)
 				+ (materialsUseBUILD1 * unitPriceMaterials) + (energyUseBUILD1 * unitPriceEnergy));
-		
-		System.out.println("  food-- "+food+"  fooduse-- "+foodUseBUILD1+"  materials--"+materials+"  materialsuse--- "+materialsUseBUILD1+"  energy-- "+energy+"  energyUse--  "+energyUseBUILD1 +"  moneyspent-- "+ moneySpent+"  total-- "+total);
+
+//		System.out.println("  food-- " + food + "  fooduse-- " + foodUseBUILD1 + "  materials--" + materials
+//				+ "  materialsuse--- " + materialsUseBUILD1 + "  energy-- " + energy + "  energyUse--  "
+//				+ energyUseBUILD1 + "  moneyspent-- " + moneySpent + "  total-- " + total);
 
 		if (food < foodUseBUILD1 || materials < materialsUseBUILD1 || energy < energyUseBUILD1 || moneySpent > 100000
 				|| 100000 - total < 0) {
@@ -276,34 +250,34 @@ public class Town {
 					+ (energyUseBUILD1 * unitPriceEnergy));
 
 			if (parentNode.state.delay > 0) {
-				delay = parentNode.state.delay - 1;
-				resourceAmount = delay > 0 ? 0
+				delay2 = parentNode.state.delay - 1;
+				resourceAmount = delay2 > 0 ? 0
 						: parentNode.state.requestedResources == Resource.FOOD ? Town.amountRequestFood
 								: parentNode.state.requestedResources == Resource.ENERGY ? Town.amountRequestEnergy
 										: Town.amountRequestMaterials;
 
 				switch (parentNode.state.requestedResources) {
 				case FOOD:
-					food = resourceAmount;
+					food += resourceAmount;
 					break;
 				case MATERIALS:
-					materials = resourceAmount;
+					materials += resourceAmount;
 					break;
 				case ENERGY:
-					energy = resourceAmount;
+					energy += resourceAmount;
 					break;
 				default:
 					break;
 				}
-				requestedResource = delay > 0 ? parentNode.state.requestedResources : null;
+				requestedResource = delay2 > 0 ? parentNode.state.requestedResources : null;
 			} else {
-				delay = 0;
+				delay2 = 0;
 				requestedResource = null;
 			}
 
 			State newChildState = new State(prosperity, Math.min(food, Constants.RESOURCE_LIMIT),
 					Math.min(energy, Constants.RESOURCE_LIMIT), Math.min(materials, Constants.RESOURCE_LIMIT),
-					moneySpent, initialState, delay, requestedResource);
+					moneySpent, initialState, delay2, requestedResource);
 			Node childNode = new Node(newChildState, parentNode, Actions.BUILD1, parentNode.depth + 1, moneySpent);
 
 			return childNode;
@@ -335,34 +309,35 @@ public class Town {
 					+ (energyUseBUILD2 * unitPriceEnergy));
 
 			if (parentNode.state.delay > 0) {
-				delay = parentNode.state.delay - 1;
-				resourceAmount = delay > 0 ? 0
+				delay2 = parentNode.state.delay - 1;
+				resourceAmount = delay2 > 0 ? 0
 						: parentNode.state.requestedResources == Resource.FOOD ? Town.amountRequestFood
 								: parentNode.state.requestedResources == Resource.ENERGY ? Town.amountRequestEnergy
 										: Town.amountRequestMaterials;
 
 				switch (parentNode.state.requestedResources) {
 				case FOOD:
-					food = resourceAmount;
+					food += resourceAmount;
 					break;
 				case MATERIALS:
-					materials = resourceAmount;
+					materials += resourceAmount;
 					break;
 				case ENERGY:
-					energy = resourceAmount;
+					energy += resourceAmount;
 					break;
 				default:
 					break;
 				}
-				requestedResource = delay > 0 ? parentNode.state.requestedResources : null;
+				requestedResource = delay2 > 0 ? parentNode.state.requestedResources : null;
 			} else {
-				delay = 0;
+				delay2 = 0;
 				requestedResource = null;
 			}
 
 			State newChildState = new State(prosperity, Math.min(food, Constants.RESOURCE_LIMIT),
 					Math.min(energy, Constants.RESOURCE_LIMIT), Math.min(materials, Constants.RESOURCE_LIMIT),
-					moneySpent, initialState, delay, requestedResource);
+					moneySpent, initialState, delay2, requestedResource);
+			
 			Node childNode = new Node(newChildState, parentNode, Actions.BUILD2, parentNode.depth + 1, moneySpent);
 
 			return childNode;
