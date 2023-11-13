@@ -1,68 +1,45 @@
+
 package code;
 
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Function;
+import code.Constants.*;
 
-//import code.Problem.Operators;
 
 public class LLAPSearch extends GenericSearch {
 
-    static List<Operators> list = Arrays.asList(Operators.REQUEST_ENERGY, Operators.REQUEST_FOOD, Operators.REQUEST_MATERIALS,
-            Operators.BUILD1, Operators.BUILD2);
     static Town town;
-    // State InitialState;
     public static InitialStateParser InitialState;
 
-    // solve
     public static String solve(String initialState, String strategy, boolean visualize) {
 
-        // InitialState = new State(initialState);
         InitialState = new InitialStateParser(initialState);
-        int moneySpent =0 ; 
-        State state = new State(InitialState.initialProsperity, InitialState.initialFood, InitialState.initialEnergy,
-                InitialState.initialMaterials, moneySpent , InitialState);
-
         town = new Town(InitialState);
+		LLAPSearch LLAP = new LLAPSearch();
+		Resource requestedresource=null; 
+        State state = new State(InitialState.initialProsperity, InitialState.initialFood, InitialState.initialEnergy,InitialState.initialMaterials, 0 , InitialState,0,requestedresource);
+        Problem problem = new Problem(state, null);
+        LLAP.visualize=visualize; 
         
-
-        Problem problem = new Problem(state, list, null, false, 0);
         String nodesExpanded; 
         String monetaryCost;
-
-//        System.out.println("problem state  " + state);
-//        System.out.println(list); 
-        System.out.println("Problem : "+ problem); 
-        
+        Node solution=null;
         
         switch (strategy) {
             case "BF":
-            	
-                String BFPlan = GeneralSearch(problem, Searchfunction.EnqueueAtEnd);  
-                System.out.println("DF plan "+ BFPlan+ ";");      
-                String resultBFS = (BFPlan == null) ? "NOSOLUTION" : BFPlan ;
-                
-                return resultBFS;
-  
+            	solution = GeneralSearch(problem, Searchfunction.EnqueueAtEnd);break; 
             case "DF":
-            	String DFNode = GeneralSearch(problem, Searchfunction.EnqueueAtFront);
-            	
-            	System.out.println("solutionNodeOfDFS"+DFNode);
-              
-                String result = (DFNode == null) ? "NOSOLUTION" : DFNode ;
-                
-                return result;
-                
-//                return DFPlan ;
+            	solution = GeneralSearch(problem, Searchfunction.EnqueueAtFront);break; 
             case "ID":
                 break;
             case "UC":
-                GeneralSearch(problem, Searchfunction.OrderedInsert);
+            	solution=GeneralSearch(problem, Searchfunction.OrderedInsert);
                 break;
             case "GR1":
                 break;
             case "GR2":
-                break;
+                break; 
             case "AS1":
                 break;
             case "AS2":
@@ -72,32 +49,56 @@ public class LLAPSearch extends GenericSearch {
                 break;
                 
         }
-        return "NOSOLUTION"; 
+//        System.out.println("SOLUTION22------"+solution);
+        String formulatedSolution = LLAP.formulateSolution(solution);
+        
+        System.out.println(formulatedSolution);
+		return formulatedSolution;
+       
     }
-    private static String constructPlan(Node node) {
-        // Implement logic to construct the plan from the root node to the current node
-        List<String> actions = new ArrayList<>();
-        while (node.parent != null) {
-            actions.add(node.operator.toString());
-            node = node.parent; 
-        }
-        Collections.reverse(actions);
-        return String.join(",", actions);
-    }
-    private static String calculateMonetaryCost(Node node) {
-        // Implement logic to calculate the total monetary cost from the root node to the current node
-        double cost = 0;
-        while (node != null) {
-            cost += node.cost;
-            node = node.parent;
-        }
-        return Double.toString(cost);
-    }
+	public String formulateSolution(Node goalNode) {
+//		System.out.println("Goal nodeee"+goalNode); 
+		if (goalNode == null) {
+//			System.out.println("expansionSequence -- " + expansionSequence);
+			return "NOSOLUTION";
+		}else {
+			if(this.visualize) {
+//				System.out.println("Path to goal:");
+			}
+			return constructPlan(goalNode) + ";" + Integer.toString(goalNode.cost) + ";" + this.expansionSequence.size();
+		}
+	}
+	
+	  private static String constructPlan(Node node) {
+		    List<String> actions = new ArrayList<>();
+		    
+		    while (node.parent != null) {
+		      actions.add(node.operator.toString());
+		      node = node.parent;
+		    }
+		    Collections.reverse(actions);
+		    return String.join(",", actions);
+		  }
 
+//	  public String getPlan(Node node) {
+//			if(node.parent == null) return "";
+//			String parentPlan = getPlan(node.parent);
+//			if(this.visualize) {
+//				System.out.println(node); // Printing nodes' order to reach goal
+//			} 
+//			String plan = parentPlan + (parentPlan.equals("")?"":",") + node.operator.name();
+//			return plan;
+//		}
+	  
+	@Override
+	public boolean goalTest(Node node) {
+		return node.state.prosperity >= Constants.GOAL_PROSPERITY_LEVEL;
+	}
+	
     public static void main(String[] args) {
         LLAPSearch llapSearch = new LLAPSearch();
-        String s = "50;12,12,12;50,60,70;30,2;19,2;15,2;300,5,7,3,20;500,8,6,3,40;";
-        llapSearch.solve(s, "BF", false);
+        String s = "50;22,22,22;50,60,70;30,2;19,1;15,1;300,5,7,3,20;500,8,6,3,40;";
+        llapSearch.solve(s, "BF", true);
     }
 
 }

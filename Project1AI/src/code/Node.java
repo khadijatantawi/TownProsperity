@@ -2,22 +2,23 @@ package code;
 
 import java.util.Arrays;
 import java.util.List;
+import code.Constants.* ; 
 
 //import code.Problem.Operators;
 
 public class Node {
-    State state; // The state of the problem
+    State state; 
     Node parent; // Parent node in the search tree
-    Operators operator;
+    Actions operator;
     int depth;
     int cost; // Cost associated with reaching this node
-
+   
     
     int foodDelay ; 
     int materialsDelay ; 
     int energyDelay ; 
 
-    public Node(State object, Node parent, Operators operator, int depth, int cost) {
+    public Node(State object, Node parent, Actions operator, int depth, int cost) {
 
         this.state = object;
         this.parent = parent;

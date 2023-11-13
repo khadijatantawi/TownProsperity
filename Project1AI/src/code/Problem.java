@@ -1,87 +1,50 @@
 package code;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
 import javax.swing.Action;
+import code.Constants.*; 
 
 public class Problem {
 
-//    public enum Operators {
-//        REQUEST_FOOD, REQUEST_MATERIALS, REQUEST_ENERGY, WAIT, BUILD1, BUILD2
-//    }
-
     State initialState;
-    Operators operators;
+    Actions action;
     Set<State> stateSpace;
-    List<Operators> operatorList;
+    List<Actions> operatorList;
     boolean goalTest;
     int pathCost;
     int prosperity;
 
-    public Problem(State initialState, List<Operators> operators, Set<State> stateSpace, boolean goalTest,
-            int pathCost) {
-
+    public Problem(State initialState, Set<State> stateSpace) {
+    	
+    	 List<Actions> list = Arrays.asList(Actions.REQUESTENERGY, Actions.REQUESTFOOD, Actions.REQUESTMATERIALS,
+    	            Actions.BUILD1, Actions.BUILD2);
+    	 
         this.initialState = initialState;
-        this.operatorList = operators;
+        this.operatorList = list;
         this.stateSpace = stateSpace;
-        this.goalTest = goalTest;
-        this.pathCost = pathCost;
+        this.goalTest = false;
+        this.pathCost = 0;
         this.prosperity = initialState.prosperity;
-        
-
+ 
     }
-
     public boolean goalTest(int prosperity) {
-    	
-    	
-    	
         if (prosperity >= 100) {
-        	System.out.println("Goal test = true ");
-        	System.out.println("prosperity=100");
-
+//        	System.out.println("Goal test = true ");
             return true;
         }
-        System.out.println("Goal test = false ");
-        System.out.println(); 
-        
+//        System.out.println("Goal test = false \n");
         return false;
     }
-
-    public List<Operators> getActions(State state) {
-
-        List<Operators> actions = new ArrayList<>();
-
-        // Check if RequestFood is applicable
-        if (state.food <= 50) {
-            actions.add(operators.REQUEST_FOOD);
-        }
-
-        // Check if RequestMaterials is applicable
-        if (state.materials <= 50) {
-            actions.add(operators.REQUEST_MATERIALS);
-        }
-
-        // Check if RequestEnergy is applicable
-        if (state.energy <= 50) {
-            actions.add(operators.REQUEST_ENERGY);
-        }
-
-        // Always add the WAIT action
-        actions.add(operators.WAIT);
-        // Add other actions as needed
-        actions.add(operators.BUILD1);
-        actions.add(operators.BUILD2);
-
-        return actions;
-    }
-    
+ 
     public String toString() {
         return "Problem{" +
                 "initialState=" + initialState +
-                ", operators=" + operators +
+                ", operators=" + action +
                 ", stateSpace=" + stateSpace +
                 ", operatorList=" + operatorList +
                 ", goalTest=" + goalTest +
